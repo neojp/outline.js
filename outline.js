@@ -1,31 +1,45 @@
-/*! outline.js v1.2.0 - https://github.com/lindsayevans/outline.js/ */
-(function(d){
+/*! outline.js v1.2.0 - https://github.com/lindsayevans/outline.js/
+    Forked by Joan Piedra - @neojp.
+    Changelog: remove outlines on page load until <tab> key is ever pressed
+*/
+(function (d) {
 
-	var style_element = d.createElement('STYLE'),
-	    dom_events = 'addEventListener' in d,
-	    add_event_listener = function(type, callback){
+	var styleElement = d.createElement('STYLE'),
+		domEvents = 'addEventListener' in d,
+		headElement = d.getElementsByTagName('HEAD')[0],
+		addEventListener = function (type, callback) {
 			// Basic cross-browser event handling
-			if(dom_events){
+			if (domEvents) {
 				d.addEventListener(type, callback);
-			}else{
+			} else {
 				d.attachEvent('on' + type, callback);
 			}
 		},
-	    set_css = function(css_text){
+		removeEventListener = function (type, callback) {
+			if (domEvents) {
+				d.removeEventListener(type, callback);
+			} else {
+				d.detachEvent('on' + type, callback);
+			}
+		},
+		setCss = function (css_text) {
 			// Handle setting of <style> element contents in IE8
-			!!style_element.styleSheet ? style_element.styleSheet.cssText = css_text : style_element.innerHTML = css_text;
-		}
-	;
+			!!styleElement.styleSheet ? styleElement.styleSheet.cssText = css_text : styleElement.innerHTML = css_text;
+		},
+		checkForKeyboardSupport = function (e) {
+			// check if tab was pressed
+			if (e.which === 9) {
+				headElement.removeChild(styleElement);
+				removeEventListener('keydown', checkForKeyboardSupport);
+			}
+		};
 
-	d.getElementsByTagName('HEAD')[0].appendChild(style_element);
+	// append css element
+	styleElement.id = 'outlinejs';
+	setCss(':focus { outline: 0 !important; } ::-moz-focus-inner { border: 0; }');
+	headElement.appendChild(styleElement);
 
-	// Using mousedown instead of mouseover, so that previously focused elements don't lose focus ring on mouse move
-	add_event_listener('mousedown', function(){
-		set_css(':focus{outline:0}::-moz-focus-inner{border:0;}');
-	});
-
-	add_event_listener('keydown', function(){
-		set_css('');
-	});
+	// check for keyboard support
+	addEventListener('keydown', checkForKeyboardSupport);
 
 })(document);
