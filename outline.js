@@ -1,5 +1,5 @@
 /*! outline.js v1.2.0 - https://github.com/lindsayevans/outline.js/
-    Forked by Joan Piedra - @neojp.
+    Forked by Joan Piedra · @neojp - https://github.com/neojp/outline.js
     Changelog: remove outlines on page load until <tab> key is ever pressed
 */
 (function (d) {
